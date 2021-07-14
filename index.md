@@ -55,8 +55,7 @@ wget https://github.com/FemeniasM/ExplorATEtools/mk.references_mo.sh
 
 Then run the script assigning the appropriate arguments:
 ```{bash, eval=FALSE}
-bash mk.references_mo.sh -p <threads> -b <bedtools binary path> -a dm_genannot.gff -g dm_genome.fa 
--t dm_transcriptome.fa -o . -r dm_RMtr.out -s dm_RMgen.out -j 'HS' -c 'namRep'
+bash mk.references_mo.sh -p <threads> -b <bedtools binary path> -a dm_genannot.gff -g dm_genome.fa -t dm_transcriptome.fa -o . -r dm_RMtr.out -s dm_RMgen.out -j 'HS' -c 'namRep'
 ```
 
 By default `awk` and `bedtools` are assumed to be available in your `$PATH` environment variable. The `-j` argument defines the overlap resolution criteria that can be based on high scores (`'HS'`), longer element (`'LE'`), or low divergence (`'LD'`). The `-c` argument defines how the repeats found will be classified. if `'namRep'` is defined it will take the names of each matching repetition (tenth column in the RepeatMasker output file). If `'classRep'` is defined, the class of the repetition will be taken (the eleventh column in the RepeatMasker output file).
@@ -158,9 +157,7 @@ wget https://github.com/FemeniasM/ExplorATEtools/mk.inputfiles.sh
 
 Then, run the script assigning the appropriate arguments:
 ```{bash, eval=FALSE}
-bash mk.inputfiles.sh -p threads -b <blastp binary path> -h <hmmer binary path> 
--r <RepeatMasker binary path> -d <TransDecoder directory path> -s <swissprot database> 
--f <Pfam database> -l <Repeats library> -t <transcriptome file> -o <output directory>
+bash mk.inputfiles.sh -p threads -b <blastp binary path> -h <hmmer binary path> -r <RepeatMasker binary path> -d <TransDecoder directory path> -s <swissprot database> -f <Pfam database> -l <Repeats library> -t <transcriptome file> -o <output directory>
 ```
 
 By default `blastp`,`hmmscan` and `RepeatMasker` are assumed to be available in your `$PATH` environment variable.
