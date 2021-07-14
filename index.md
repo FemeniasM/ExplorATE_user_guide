@@ -16,6 +16,7 @@ ExplorATE (Explore Active Transposable Elements) is an R package for the explora
 ## 1. INSTALLING ExplorATE {#t1}
 
 ExplorATE requires some previously installed packages. Make sure you have a recent R version (> 4.1.0) and select those packages that are not available in your environment:
+
 ```{r eval=FALSE}
 #install complementary packages
 install.packages(c("stringr","seqinr","foreach","doParallel"))
@@ -27,7 +28,8 @@ BiocManager::install(c("readr","GenomicRanges", "IRanges","csaw", "edgeR",
                        "SummarizedExperiment","DESeq2", "tximport"))
 ```
 
-You can install ExplorATE locally by downloading the file `ExplorATE_0.1.tar.gz` or install via GitHub using `devtools::install_github()`   
+You can install ExplorATE locally by downloading the file `ExplorATE_0.1.tar.gz` or install via GitHub using `devtools::install_github()`:
+
 ```{r eval=FALSE}
 #install ExplorATE locally
 install.packages("./ExplorATE_0.1.tar.gz", repos=NULL, type = "source")
@@ -45,15 +47,18 @@ ExplorATE allows the exploration of transposable elements whether a reference ge
 When the reference genome is available the user must supply a *de novo* assembled transcriptome and a RepeatMasker output file originated from the transcriptome (`RMtr.out` and `transcriptome.fa` in the example below). In addition, you must have the genome in `.fasta` format, the GFF annotations file for the genome version, and a RepeatMasker file for the reference genome that can be obtained from the program's [website](http://www.repeatmasker.org/genomicDatasets/RMGenomicDatasets.html).
 
 ExplorATE takes the transcriptome and the RepeatMasker output file derived from the transcriptome to make a reference of active TEs in the samples. It also performs the overlaps resolution of repeats within each transcript. The user can perform additional settings on the RepeatMasker file as shown in sections [5](#t5) and [6](#t6). The figure below shows a summary of the workflow when the genome is available.
-![alt text](./flowchartMO.png)
+
+![alt text](https://github.com/FemeniasM/ExplorATE_user_guide/flowchartMO.png)
 
 You can get the decoys files to run salmon from the bash [script](https://github.com/FemeniasM/ExplorATEtools/mk.references_mo.sh) provided by ExplorATE, or run the `mk.reference_mo()` function from the ExplorATE package. Both examples are shown below.
 To run the shell script, first download the script and place it in a directory on your system:
+
 ```{bash, eval=FALSE}
 wget https://github.com/FemeniasM/ExplorATEtools/mk.references_mo.sh
 ```
 
 Then run the script assigning the appropriate arguments:
+
 ```{bash, eval=FALSE}
 bash mk.references_mo.sh -p <threads> -b <bedtools binary path> -a dm_genannot.gff -g dm_genome.fa -t dm_transcriptome.fa -o . -r dm_RMtr.out -s dm_RMgen.out -j 'HS' -c 'namRep'
 ```
@@ -82,7 +87,7 @@ Once the decoys files (`trmeSalmon.fasta` and `decoys.txt`) are obtained you are
 
 When there is no reference genome, ExplorATE takes a TransDecoder-generated gene model file and a blast-generated annotation file (`TransDecoder.gff3` and `BLAST.outfmt6` in the example below) to identify those repeats overlapping with protein-coding genes. Once the transcripts with co-transcribed repeats are identified, they are excluded from the RepeatMasker output file. The user can further refine his RepeatMasker file to resolve overlaps or apply selection criteria as shown in sections [5](#t5) and [6](#t5). A general flow chart of the pipeline is shown in the figure below.
 
-![alt text](./flowchart_nonMO.png)
+![alt text](https://github.com/FemeniasM/ExplorATE_user_guide/flowchart_nonMO.png)
 
 The user can run these steps separately or do them all together with the `mk.reference()` function as shown below.
 
@@ -150,12 +155,14 @@ If you are working with a model organism you must download its reference genome 
 When working with a non-model organism you must first annotate the transcriptome. The mk.inputfiles.sh script runs identify candidate coding regions within transcript sequences with TransDecoder and performs ORF search by homology against the Pfam (using HMMER) and UniProt/SwissProt (using BLAST) databases. Finally, it runs RepeatMasker against a user-specified library. The transposon library should be as close as possible to the species of interest. Some users may want to perform *de novo* identification of elements with RepeatModeler and subsequently re-annotate "unknown" sequences using CENSOR to generate libraries specific to their organism of interest. You can find useful information on how to generate *de novo* libraries and combine them with RepeatMasker libraries on the [RepeatModeler](https://www.repeatmasker.org/RepeatModeler/) web page and at this [link](https://blaxter-lab-documentation.readthedocs.io/en/latest/repeatmodeler.html).
 In other cases, curated libraries of elements such as Dfam and RepBase could directly provide reliable information on your studied organism. The more specific the library used, the lower the bias related to the age of the transposable element, which is why we recommend carefully selecting the library to use.
 Once the library is defined, the user is ready to run the script as shown below:
-First, download the script mk.inputfiles.sh
+First, download the script `mk.inputfiles.sh`:
+
 ```{bash, eval=FALSE}
 wget https://github.com/FemeniasM/ExplorATEtools/mk.inputfiles.sh
 ```
 
 Then, run the script assigning the appropriate arguments:
+
 ```{bash, eval=FALSE}
 bash mk.inputfiles.sh -p threads -b <blastp binary path> -h <hmmer binary path> -r <RepeatMasker binary path> -d <TransDecoder directory path> -s <swissprot database> -f <Pfam database> -l <Repeats library> -t <transcriptome file> -o <output directory>
 ```
@@ -169,6 +176,7 @@ RepeatMasker also allows you to generate an alignment file `.aln` along with the
 You can use the `read.RepMask()` function to read the RepeatMasker output file and verify it. The function `read.alignfile()` allows reading the alignment file and returns a `data.frame` with the identification of the sequence, the Family of the assigned repetition. You can average the distances per sequence or per family of TEs (you can run `?read.alignfile()` for more details).
 
 Some examples are shown below:
+
 ```{r eval=FALSE}
 RM <- ExplorATE::read.RepMask("RM.out")
 ALN <- ExplorATE::read.alignfile("RM.aln", average = T, by="classRep")
