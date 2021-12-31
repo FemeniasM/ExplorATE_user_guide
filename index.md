@@ -3,7 +3,7 @@
 ExplorATE (Explore Active Transposable Elements) is an R package for the exploration and identification of active transposons in RNA-seq data. Our pipeline uses the alignment score comparisons (from the Selective Alignment algorithm) to simultaneously handle TE co-transcription (retained in introns regions or UTRs) and multi-mapping. 
 The package offers functions to manipulate the RepeatMasker output files, and allows to discriminate target TEs from those repeats that are co-transcribed with genes coding non-transposon proteins. Through a simple pipeline you can solve overlaps of the repetitions that RepeatMasker cannot solve based on either highest score (HS), longer length (LE) or lower Kimura’s distances (LD). The transposons are finally annotated in a reference file. Additionally, the user can set a criterion similar to Wicker's rule. Under this criterion, the algorithm assigns target transcripts based on the percentage of identity for a class/family of TEs, the percentage for each TE class/family as the ratio between TE class/family length with respect to the transcript length, and a minimum of transcript length. The decoy file and the transcriptome salmon-formated created by ExplorATE, are used for indexing and quantification with Salmon. Finally, a function is incorporated to import the quantification estimates into the R environment for their subsequent differential expression analysis.
 
-## INDEX
+### INDEX
 1.    [INSTALLING ExplorATE](#t1)
 2.    [QUICK START](#t2)
 3.    [MAKING INPUT FILES](#t3)
@@ -15,7 +15,7 @@ The package offers functions to manipulate the RepeatMasker output files, and al
 9.    [RUN ExplorATE FOR NON-MODEL ORGANISMS FROM THE SHELL SCRIPT](#t9)
 10.   [BIBLIOGRAPHY](#t10)
 
-## 1. INSTALLING ExplorATE {#t1}
+### 1. INSTALLING ExplorATE {#t1}
 
 ExplorATE requires some previously installed packages. Make sure you have a recent R version (> 4.1.0) and select those packages that are not available in your environment:
 ```{r eval=FALSE}
@@ -38,7 +38,7 @@ install.packages("./ExplorATE_0.1.tar.gz", repos=NULL, type = "source")
 devtools::install_github("FemeniasM/ExplorATEproject")
 ```
 
-## 2. QUICK START {#t2}
+### 2. QUICK START {#t2}
 
 ExplorATE allows the exploration of transposable elements in model and non-model organisms. Below is a quick example for each case, however we encourage the user to explore the extended pipeline step by step.
 
@@ -125,7 +125,7 @@ By default `awk`, `bedtools`, `salmon` are assumed to be available in your `$PAT
 
 The `ExplorATE mo` mode creates the reference files (target TEs and decoy sequences) and runs Salmon with the appropriate arguments. The Salmon estimates can then be imported with the function `ExplorATE::import.RTEs()` from the R package as shown in section [8](#t8)
 
-### 2.2 Make TEs references in non-model organisms  {#t2.2}
+#### 2.2 Make TEs references in non-model organisms  {#t2.2}
 
 When there is no reference genome, ExplorATE takes a gene model file from TransDecoder and a gene annotation file from BLAST (`TransDecoder.gff3` and `BLAST.outfmt6` in the example below) to identify those repeats overlapping with protein-coding genes. Once the transcripts with co-transcribed repeats are identified, they are excluded from the RepeatMasker output file. The user can further refine his RepeatMasker file to resolve overlaps or apply selection criteria as shown in sections [5](#t5) and [6](#t5). A general flow chart of the pipeline is shown in the figure below.
 
@@ -159,7 +159,7 @@ With this function a reference file will be created containing the class/family 
 
 When executing the `mk.reference()` function, it will initially ask us if the assigned classes/families are correct. You should check that there are no ambiguities in the labeling before executing the function. If the assigned classes/families are correct, you need to type `'y'+Enter` in the console.
 
-### 2.3 Run Salmon and import count estimates {#t2.3}
+#### 2.3 Run Salmon and import count estimates {#t2.3}
 
 After creating the reference file, the next step is to perform the quantification estimate with Salmon. Linux users can use the `run.salmon()` function in R or run Salmon with the appropriate arguments.
 
@@ -242,7 +242,7 @@ bash ExplorATE nmo_in -p 12 -n <blastp binary path> -m <hmmerscan binary path> \
 -o <output directory>
 ```
 
-### 3.1 RepeatMasker repeats annotations {#t3.1}
+#### 3.1 RepeatMasker repeats annotations {#t3.1}
 
 As mentioned above, a detailed annotation of the repeats present in the transcriptome or genome is necessary. ExplorATE uses a RepeatMasker masking output file to identify the TEs present in each data set. RepeatMasker also allows you to generate an alignment file `.aln` with the output. This file can be used later in the resolution of overlapping repeats.
 You can use the `read.RepMask()` function from the R package to read the RepeatMasker output file and verify it. The function `read.alignfile()` allows reading the alignment file and returns a `data.frame` with the identification of the sequence, the family of the assigned repetition. You can average the distances per sequence or per family of TEs (you can run `?read.alignfile()` for more details).
@@ -271,7 +271,7 @@ RM$classRep <- gsub("NonLTR/SINE/7SL", "NonLTR/SINE/SINE1", RM$classRep)
 RM$classRep <- gsub("NonLTR/SINE/tRNA", "NonLTR/SINE/SINE2", RM$classRep)
 ```
 
-### 3.2 Protein-coding genes annotations {#t3.2}
+#### 3.2 Protein-coding genes annotations {#t3.2}
 
 In non-model organism analysis, TEs identified in the RepeatMasker file that overlap with transcripts with candidate ORFs for non-transposon-related protein-coding genes are assigned as co-transcribed TEs. Candidate ORFs are obtained from a `GFF3` file generated with [TransDecoder](https://github.com/TransDecoder/TransDecoder/wiki), and we recommend running it with BLASTP and Pfam searches retaining only the best ORF. The file can be explored with the following functions of the R package:
 
@@ -289,7 +289,7 @@ head(GENE.ANOT)
 
 Additionally, ExplorATE identifies whether the co-transcribed TEs are in UTR or CDS regions and generates an output file with this information with the `featureSum = T` argument from the `rm.cotransRep()` function (described in the next [section](#t4). 
 
-## 4. FILTERING COTRANSCRIBED REPEATS {#t4}
+### 4. FILTERING COTRANSCRIBED REPEATS {#t4}
 
 A fundamental step in the ExplorATE pipeline (with or without reference genome) is the removal of elements co-transcribed with genes. This allows to refine the set of candidate TEs and define sequences that will be used as decoys in quantification with Salmon. The `rm.cotransRep()` function from the R package remove co-transcribed TEs from the RepeatMasker file. As mentioned above, the function requires a annotations file and a gene model file:
 
@@ -327,7 +327,7 @@ As mentioned in section [3.2](#t3.2), the argument `cleanTEsProt` refers to whet
 
 If the argument `featureSum = T` additional files are created containing a summary of the protein-coding transcripts with co-transcribed TEs (`features.summary.*`).
 
-## 5. RESOLVING OVERLAPPING {#t5}
+### 5. RESOLVING OVERLAPPING {#t5}
 
 The RepeatMasker output file may contain overlapping repeats when the program cannot resolve them automatically. The users can resolve these overlaps with the python [script](https://github.com/rmhubley/RepeatMasker/blob/master/util/RM2Bed.py) included with RepeatMasker before run ExplorATE. Alternatively, users can resolve overlaps with ExplorATE. The python script is included in the current version of shell script ExplorATE, and the ExplorATE R package include the `ovlp.res()` function. Similarly to the python script, this function allows resolves overlaps by the higher score ("HS"), a longer length ("LE") or lower divergence ("LD") set with the `over.res =` argument. 
 The ExplorATE function defines the following criteria for assigning a TE class/family to an overlapping region: 1) When two repeats partially overlap, the overlapping bases are assigned to the item with the best score. 2) If one repeat is contained within another, the repeat with the lowest score is discarded. 3) If two items have the same score, they are assigned based on the first item in the RepeatMasker file.
@@ -364,7 +364,7 @@ Notice that the output directory `outdir =` is only required if `featureSum = T`
 
 The `ovlp.res()` function allows parallel processing. Users can select the number of cores with the `threads =` argument. 
 
-## 6. TRANSPOSONS ANNOTATION AND MAKING REFERENCE FILES {#t6}
+### 6. TRANSPOSONS ANNOTATION AND MAKING REFERENCE FILES {#t6}
 
 After remove co-transcribed repeats and resolve overlaps in the RepeatMasker file, the user must annotate the transcripts that potentially correspond to active TEs (target TEs) and define the sequences to be used as decoys in the quantification of Salmon. ExplorATE also allows set a criterion similar to Wicker’s rule (([Wicker et al. (2007)](https://www.nature.com/articles/nrg2165))) to define the target TEs. Under this criterion, the algorithm assigns target transcripts based on the percentage of identity for a class/family of TEs, the percentage for each TE class/family as the ratio between TE class/family length with respect to the transcript length, and a minimum of transcript length. The default ‘80-80-80’ Wicker-like rule  is a selection criterion where the transcripts will be considered targets if they have a TE class/family annotation with >80% identity, represents >80% of the transcript length, and target transcripts must have at least 80bp in length. The user can change the default values of the Wicker-like criterion to make it more or less stringent. 
 The `Wickerlike.rule()` function of the ExplorATE package allows you to apply the Wickerlike rule. In the following example, the `Wickerlike.rule()` function will annotate as a target ET those transcripts with the requirements: TE with 80% identity that represent at least 60% of the transcript, and the transcripts are at least 100 bp in length.
@@ -380,7 +380,7 @@ like.WickerRule(
 ```
 When there is more than one family of TEs per transcript with assigned Wicker-like rule criteria, the user can set whether to annotate all matches (`best.by = NULL`) or only annotate the best match per transcript. When the best match is annotated, the longest family (`best.by = 'total_repeat_length'`) or the family with the best identity score (`best.by = 'per_identity'`) can be used as criteria. Further, the function allows to set user-defined transcripts lengths with the `custom.lengths` argument. 
 
-### 6.1 Building reference files with a single function {#t6.1}
+#### 6.1 Building reference files with a single function {#t6.1}
 
 ExplorATE incorporates a function that integrates all the functions described above. The `mk.reference()` function allows to create the reference files directly avoiding execute functions step-by-step. Here is an example:
 
@@ -419,7 +419,7 @@ RM.reference <- ExplorATE::mk.reference(RepMask = RM.ovlp.res,
 
 The `mk.reference()` function returns a `data.frame` with annotated target TEs transcripts and creates three files in the output directory: a `reference.csv` file with the target TE annotations, a `decoy.txt` file with transcripts defined as decoys, and a `.fasta` file (`trmeSalmon.fasta`) with target TEs and decoy sequences to be used in Salmon quantification.
 
-## 7. SALMON QUANTIFICATION {#t7}
+### 7. SALMON QUANTIFICATION {#t7}
 
 The [Salmon](https://combine-lab.github.io/salmon/getting_started/) program is widely used in the transcripts quantification. ExplorATE implements the Selective Alignment strategy through Salmon to reduce spurious mapping produced by multimapper reads derived from co-transcribed TEs. The users can run Salmon locally or, run it with the `run.salmon()` function from ExplorATE package. If you have questions about how to run the program locally, see the detailed Salmon's [documentation](https://salmon.readthedocs.io/en/latest/). Make sure to use the `decoy.txt` file and the `trmeSalmon.fasta` transcriptome generated by the `mk.reference()` function. If Salmon is installed, users can run the following command to run Salmon with the ExplorATE function. 
 
@@ -437,7 +437,7 @@ ExplorATE::run.salmon(index = "sampleIndex",
 
 Details of the Salmon procedure are described in [Patro et al. (2017)](https://www.nature.com/articles/nmeth.4197), and the Selective Alignment approach is described in [Srivastava et al. (2020)](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02151-8).
 
-## 8. IMPORT ESTIMATES TO R FOR DIFFERENTIAL EXPRESSION ANALYSIS {#t8}
+### 8. IMPORT ESTIMATES TO R FOR DIFFERENTIAL EXPRESSION ANALYSIS {#t8}
 
 After running Salmon, the estimates must be imported into the R environment and objects (e.g., DGEList or DESeqDataSet for edgeR and DESeq analyses respectively) must be created to to perform the subsequent differential expression analysis. The `import.RTEs()` function imports the estimates using the `tximport` package (see [Soneson et al. (2015)](https://f1000research.com/articles/4-1521/v1) for more details). The `import.RTEs()` function directly creates an offset that corrects the estimates for changes in the average transcripts length across samples. The following code shows an example to create a DGEList object:
 
@@ -454,7 +454,7 @@ In the example above, the argument `import_to = "edgeR"` was selected to create 
 
 Alternatively, you can select `import_to = "DESeq2"` and continue with the `DESeq()` function (see [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html) and [Love et al. (2014)](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) for more details). If neither option is selected, the transcript-level estimates without offset will be imported.
 
-## 9. RUN ExplorATE FOR NON-MODEL ORGANISMS FROM THE SHELL SCRIPT {#t9}
+### 9. RUN ExplorATE FOR NON-MODEL ORGANISMS FROM THE SHELL SCRIPT {#t9}
 
 The ExplorATE shell script has three modes of execution for non-model organisms. The `nmo_in` mode allows to create input files as described in section [3](#t3), and then the pipeline can be run by use functions from the R ExplorATE package (mentioned above), or with the `nmo` mode from the shell script (see figure in section [2.2](#t2.2)). A third mode `nmo_all` is a fusion of the `nmo_in` and `nmo` modes that allows to create the input files and run the pipeline simultaneously. The `nmo` mode is described below, the flags for this mode are shown below:
 ```sh
@@ -509,7 +509,7 @@ bash ExplorATE nmo -p 12 -b <bedtools binary path> -e pe -l reads  -n <blast out
 Similar to the functions in the R package, the shell script generates salmon output files for each library. The estimates can be imported into the R environment with the `import.RTEs()` function as described in section [8](#t8).
 
 
-## 10. BIBLIOGRAPHY {#t9}
+### 10. BIBLIOGRAPHY {#t9}
 
 Goerner-Potvin, P., Bourque, G. Computational tools to unmask transposable elements. Nat Rev Genet 19, 688–704 (2018). https://doi.org/10.1038/s41576-018-0050-x
 
